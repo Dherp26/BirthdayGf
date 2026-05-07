@@ -1,22 +1,33 @@
 const revealItems = document.querySelectorAll(".scrap-page");
 
-const observer = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
-      }
-    });
-  },
-  {
-    threshold: 0.18,
-  }
-);
-
 revealItems.forEach((item) => {
   item.classList.add("reveal");
-  observer.observe(item);
 });
+
+if ("IntersectionObserver" in window) {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    {
+      rootMargin: "0px 0px -10% 0px",
+      threshold: 0.01,
+    }
+  );
+
+  revealItems.forEach((item) => {
+    observer.observe(item);
+  });
+} else {
+  revealItems.forEach((item) => {
+    item.classList.add("visible");
+  });
+}
 
 const photos = document.querySelectorAll(".photo");
 const lightbox = document.createElement("div");
